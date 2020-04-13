@@ -1,26 +1,43 @@
-import React from 'react';
-import logo from './logo.svg';
+import React,{Component} from 'react';
 import './App.css';
 
-function App() {
+import { CardList } from './components/card-list/card-list-component';
+import { SearchBox} from './components/search-box/search-box-component';
+
+class App extends Component {
+
+  constructor(){
+    super()
+    this.state = {
+      products:[],
+      searchFeild:''
+    };
+  }
+  
+changeName = () =>{
+  this.setState({name:"Parimi Sowjanya Welcome !!!!..."})
+}
+
+componentDidMount(){
+  fetch('https://jsonplaceholder.typicode.com/users')
+  .then(response=>response.json())
+  .then(users=>this.setState({products:users}));
+}
+
+handleChange = (e) =>{
+  this.setState({searchFeild:e.target.value});
+}
+
+render(){
+  const {products,searchFeild} = this.state;
+  const filteredUsers = products.filter(item=>item.name.toLowerCase().includes(searchFeild.toLowerCase()));
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <SearchBox placeholder="Search by name" onSearchChange ={this.handleChange}/>
+      <CardList list={filteredUsers}></CardList>
     </div>
   );
+}
 }
 
 export default App;
